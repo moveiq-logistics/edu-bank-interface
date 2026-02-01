@@ -3,160 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apex Global - Secure Login</title>
+    <title>Globus Bank | Online Banking</title>
     <style>
-        :root { --primary: #1a1a7c; --success: #28a745; --danger: #dc3545; --bg: #f0f2f5; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; }
-
-        /* --- LOGIN PAGE STYLES --- */
-        #login-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #1a1a7c; display: flex; align-items: center; justify-content: center; z-index: 1000;
-        }
-        .login-box {
-            background: white; padding: 40px; border-radius: 12px; width: 350px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        .login-box h2 { color: #1a1a7c; margin-bottom: 25px; }
+        :root { --globus-blue: #003366; --globus-gold: #c5a059; --bg-gray: #f8f9fa; --text-dark: #333; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg-gray); margin: 0; color: var(--text-dark); }
         
-        /* --- DASHBOARD STYLES --- */
-        #dashboard { display: none; padding: 20px; }
-        .container { max-width: 900px; margin: auto; }
-        .balance-card { 
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6); 
-            color: white; padding: 35px; border-radius: 15px; margin-bottom: 25px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        /* --- LOGIN PAGE --- */
+        #login-overlay {
+            position: fixed; inset: 0; background: var(--globus-blue); 
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
         }
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .login-card {
+            background: white; padding: 40px; border-radius: 8px; width: 380px; text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .login-card h1 { color: var(--globus-blue); margin-bottom: 5px; font-size: 24px; }
+        .login-card p { font-size: 14px; color: #666; margin-bottom: 30px; }
 
-        /* Form Elements */
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { 
-            width: 100%; padding: 12px; background: var(--primary); color: white; 
-            border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px;
+        /* --- DASHBOARD LAYOUT --- */
+        #main-app { display: none; display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+        .sidebar { background: #002244; color: white; padding: 30px 20px; }
+        .sidebar h2 { border-bottom: 2px solid var(--globus-gold); padding-bottom: 10px; margin-bottom: 30px; }
+        .nav-item { padding: 12px; margin: 10px 0; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); }
+        
+        .content { padding: 40px; overflow-y: auto; }
+        
+        /* --- COMPONENTS --- */
+        .balance-hero {
+            background: white; padding: 30px; border-radius: 12px; border-left: 8px solid var(--globus-gold);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        button:hover { filter: brightness(1.2); }
+        .balance-hero h3 { margin: 0; color: #777; font-weight: normal; }
+        .balance-hero h1 { margin: 5px 0 0; font-size: 36px; color: var(--globus-blue); }
+
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        
+        /* Transfer Form */
+        .transfer-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        input { padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        button { 
+            background: var(--globus-blue); color: white; border: none; padding: 12px; 
+            border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;
+        }
+        button:hover { background: #004488; }
 
         /* History Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { text-align: left; padding: 15px; border-bottom: 1px solid #f0f0f0; }
-        .credit { color: var(--success); font-weight: bold; }
-        .debit { color: var(--danger); font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 15px; background: #f1f1f1; color: #555; font-size: 13px; }
+        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .amt-pos { color: #28a745; font-weight: bold; }
+        .amt-neg { color: #dc3545; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="login-screen">
-    <div class="login-box">
-        <h2>APEX GLOBAL</h2>
-        <p>Secure Client Access</p>
-        <input type="text" id="user" placeholder="Username (try: admin)">
-        <input type="password" id="pass" placeholder="Password (try: 1234)">
-        <button onclick="checkLogin()">Sign In</button>
-        <p id="login-error" style="color:red; font-size:12px; display:none;">Invalid credentials</p>
+<div id="login-overlay">
+    <div class="login-card">
+        <h1>GLOBUS BANK</h1>
+        <p>Personal Banking Portal</p>
+        <input type="text" id="u-input" placeholder="Username" style="width:100%; margin-bottom:15px;">
+        <input type="password" id="p-input" placeholder="Password" style="width:100%; margin-bottom:20px;">
+        <button onclick="handleLogin()" style="width:100%;">Secure Login</button>
+        <div id="err-msg" style="color:red; margin-top:15px; display:none; font-size:13px;">Authentication Failed.</div>
     </div>
 </div>
 
-<div id="dashboard">
-    <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="color: #1a1a7c;">APEX GLOBAL</h2>
-            <button onclick="location.reload()" style="width: auto; padding: 5px 15px; background: #666;">Logout</button>
-        </div>
-        
-        <div class="balance-card">
-            <p style="opacity: 0.8; margin-bottom: 5px;">Total Available Balance</p>
-            <h1 id="balance" style="font-size: 42px; margin: 0;">$5,000,000.00</h1>
-            <p style="margin-top: 15px; font-size: 14px; opacity: 0.9;">Account: **** **** **** 8829</p>
-        </div>
+<div id="main-app">
+    <div class="sidebar">
+        <h2>Globus Bank</h2>
+        <div class="nav-item">Dashboard</div>
+        <div class="nav-item">Transfer Funds</div>
+        <div class="nav-item">Cards Management</div>
+        <div class="nav-item">Statements</div>
+        <div class="nav-item" onclick="location.reload()" style="margin-top:50px; color: #ff9999;">Sign Out</div>
+    </div>
 
-        <div class="action-grid">
-            <div class="card">
-                <h3>New Transfer</h3>
-                <input type="text" id="recipient" placeholder="Recipient Name">
-                <input type="number" id="amount" placeholder="Amount ($)">
-                <button onclick="makeTransfer()">Execute Transfer</button>
+    <div class="content">
+        <div class="balance-hero">
+            <div>
+                <h3>Total Available Balance</h3>
+                <h1 id="balance-display">$2,000,000.00</h1>
             </div>
-            <div class="card">
-                <h3>Quick Stats</h3>
-                <p>Status: <span style="color: green;">● Online</span></p>
-                <p>IP Address: 192.168.1.104</p>
-                <p>Last Transfer: None</p>
+            <div style="text-align: right;">
+                <p><strong>Grace</strong> (8829-001)</p>
+                <span style="color: #28a745;">● Account Active</span>
             </div>
         </div>
 
         <div class="card">
-            <h3>Recent Activity</h3>
-            <table id="historyTable">
+            <h3>Domestic Transfer</h3>
+            <div class="transfer-form">
+                <input type="text" id="rec-acc" placeholder="Recipient Account Number">
+                <input type="text" id="rec-name" placeholder="Recipient Full Name">
+                <input type="number" id="trans-amt" placeholder="Amount ($)">
+                <button onclick="executeTransfer()">Transfer Funds</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Transaction History (Since 01/11/2025)</h3>
+            <table>
                 <thead>
                     <tr>
-                        <th>Description</th>
                         <th>Date</th>
-                        <th>Status</th>
+                        <th>Description</th>
+                        <th>Type</th>
                         <th>Amount</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Opening Deposit</td>
-                        <td>Feb 01, 2026</td>
-                        <td>Completed</td>
-                        <td class="credit">+$5,000,000.00</td>
-                    </tr>
-                </tbody>
+                <tbody id="history-body">
+                    </tbody>
             </table>
         </div>
     </div>
 </div>
 
 <script>
-    let currentBalance = 5000000;
+    let currentBalance = 2000000.00;
+    
+    // Credentials provided by user
+    const AUTH = { user: "Grace8908", pass: "Family1997@" };
 
-    // LOGIN LOGIC
-    function checkLogin() {
-        const user = document.getElementById('user').value;
-        const pass = document.getElementById('pass').value;
+    // Pre-filled history data
+    const historyData = [
+        { date: "01/25/2026", desc: "Salary Credit - TechCorp", type: "Income", amt: 15000, pos: true },
+        { date: "01/18/2026", desc: "Internal Transfer - Savings", type: "Income", amt: 50000, pos: true },
+        { date: "01/10/2026", desc: "Visa Debit - Amazon Prime", type: "Debit Card", amt: -14.99, pos: false },
+        { date: "12/28/2025", desc: "Transfer to Mortgage Dept", type: "Outgoing", amt: -4500, pos: false },
+        { date: "12/15/2025", desc: "Dividend Payment", type: "Income", amt: 850, pos: true },
+        { date: "11/22/2025", desc: "Travel Booking - Emirates", type: "Outgoing", amt: -2300, pos: false },
+        { date: "11/12/2025", desc: "Point of Sale - Apple Store", type: "Debit Card", amt: -1299, pos: false },
+        { date: "11/01/2025", desc: "Initial Balance Settlement", type: "Income", amt: 1942263.99, pos: true }
+    ];
 
-        // Using simple check for demo purposes
-        if (user === "admin" && pass === "1234") {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
+    function handleLogin() {
+        const u = document.getElementById('u-input').value;
+        const p = document.getElementById('p-input').value;
+
+        if(u === AUTH.user && p === AUTH.pass) {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('main-app').style.display = 'grid';
+            loadHistory();
         } else {
-            document.getElementById('login-error').style.display = 'block';
+            document.getElementById('err-msg').style.display = 'block';
         }
     }
 
-    // TRANSFER LOGIC
-    function makeTransfer() {
-        const recipient = document.getElementById('recipient').value;
-        const amount = parseFloat(document.getElementById('amount').value);
+    function loadHistory() {
+        const tbody = document.getElementById('history-body');
+        tbody.innerHTML = "";
+        historyData.forEach(item => {
+            const row = `<tr>
+                <td>${item.date}</td>
+                <td>${item.desc}</td>
+                <td>${item.type}</td>
+                <td class="${item.pos ? 'amt-pos' : 'amt-neg'}">${item.pos ? '+' : ''}$${Math.abs(item.amt).toLocaleString()}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
 
-        if (!recipient || isNaN(amount) || amount <= 0) {
-            alert("Enter recipient and valid amount.");
+    function executeTransfer() {
+        const acc = document.getElementById('rec-acc').value;
+        const name = document.getElementById('rec-name').value;
+        const amt = parseFloat(document.getElementById('trans-amt').value);
+
+        if(!acc || !name || isNaN(amt) || amt <= 0) {
+            alert("Error: Missing Transfer Information");
             return;
         }
 
-        if (amount > currentBalance) {
-            alert("Transaction Declined: Insufficient Funds.");
+        if(amt > currentBalance) {
+            alert("Declined: Insufficient Funds");
             return;
         }
 
-        currentBalance -= amount;
-        document.getElementById('balance').innerText = `$${currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        // Logic
+        currentBalance -= amt;
+        document.getElementById('balance-display').innerText = `$${currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
 
-        const table = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
-        const row = table.insertRow(0);
-        row.innerHTML = `
-            <td>Wire Transfer to ${recipient}</td>
-            <td>${new Date().toLocaleDateString()}</td>
-            <td>Pending</td>
-            <td class="debit">-$${amount.toLocaleString()}</td>
-        `;
+        // Add to history top
+        const tbody = document.getElementById('history-body');
+        const row = `<tr>
+            <td>02/01/2026</td>
+            <td>Wire to ${name} (${acc})</td>
+            <td>Outgoing</td>
+            <td class="amt-neg">-$${amt.toLocaleString()}</td>
+        </tr>`;
+        tbody.innerHTML = row + tbody.innerHTML;
 
-        document.getElementById('recipient').value = '';
-        document.getElementById('amount').value = '';
-        alert("Wire Transfer Initiated Successfully.");
+        alert("Transfer Successful! Transaction ID: GLB-" + Math.floor(Math.random() * 999999));
     }
 </script>
 
