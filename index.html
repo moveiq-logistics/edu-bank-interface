@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Global Bank | Secure Portal</title>
+    <style>
+        :root {
+            --primary: #1a237e;
+            --accent: #00e676;
+            --bg: #f4f7f6;
+            --text: #333;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; color: var(--text); }
+        
+        /* Header */
+        header { background: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Dashboard Layout */
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        
+        .balance-card {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .balance-amount { font-size: 3rem; font-weight: bold; margin: 10px 0; }
+
+        /* Features Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .card { background: white; padding: 1.5rem; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s; border: 1px solid #ddd; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        /* Buttons */
+        .btn { background: var(--accent); border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>APEX GLOBAL</h2>
+    <div>Welcome, Demo User | <a href="#" style="color:white; text-decoration:none;">Logout</a></div>
+</header>
+
+<div class="container">
+    <div class="balance-card">
+        <p>Total Available Balance</p>
+        <div class="balance-amount">$5,000,000.00</div>
+        <p>Account: **** **** **** 8829</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>💸 Transfer</h3>
+            <p>Move funds to domestic or international accounts.</p>
+        </div>
+        <div class="card">
+            <h3>📄 Statements</h3>
+            <p>View monthly history and tax documents.</p>
+        </div>
+        <div class="card">
+            <h3>💳 Cards</h3>
+            <p>Manage debit and credit card limits.</p>
+        </div>
+        <div class="card">
+            <h3>🛡️ Security</h3>
+            <p>Update 2FA and login credentials.</p>
+        </div>
+    </div>
+
+    <div style="margin-top: 3rem; background: white; padding: 2rem; border-radius: 10px;">
+        <h3>Recent Activity</h3>
+        <hr>
+        <p style="display: flex; justify-content: space-between;">
+            <span>Initial Education Credit</span>
+            <span style="color: green; font-weight: bold;">+$5,000,000.00</span>
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
