@@ -1,234 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fundara Bank | Professional Dashboard</title>
-    <style>
-        :root {
-            --primary-navy: #0a1931;
-            --accent-blue: #185adb;
-            --sidebar-bg: #060d1a;
-            --text-light: #ffffff;
-            --bg-gray: #f0f2f5;
-            --success-green: #2ecc71;
-            --warning-orange: #f39c12;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Investment Dashboard</title>
 
-        body { font-family: 'Inter', sans-serif; margin: 0; display: flex; background: var(--bg-gray); }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        /* Sidebar Navigation */
-        .sidebar {
-            width: 260px;
-            background: var(--sidebar-bg);
-            color: white;
-            height: 100vh;
-            position: fixed;
-            padding-top: 20px;
-        }
-
-        .sidebar h2 { padding: 0 25px; color: #fff; font-size: 1.2rem; margin-bottom: 40px; }
-
-        .nav-link {
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            color: #a0a0a0;
-            text-decoration: none;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: var(--accent-blue);
-            color: white;
-        }
-
-        /* Main Content Area */
-        .main-wrapper {
-            margin-left: 260px;
-            width: calc(100% - 260px);
-            padding: 40px;
-        }
-
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-
-        /* Dashboard Components */
-        .balance-card {
-            background: var(--primary-navy);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .balance-amount { font-size: 2.5rem; font-weight: 700; margin: 10px 0; }
-
-        .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
-
-        .white-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-
-        /* Investment Cards */
-        .investment-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .plan-card {
-            border: 2px solid #eee;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .plan-card:hover { border-color: var(--accent-blue); transform: translateY(-5px); }
-
-        /* Buttons & Forms */
-        .btn {
-            background: var(--accent-blue);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #f0f0f0; }
-        .status { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
-        .status-completed { background: #e8f5e9; color: #2e7d32; }
-    </style>
+<style>
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+body {
+  margin: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  width: 240px;
+  background: #020617;
+  padding: 20px;
+}
+.sidebar h2 {
+  color: #38bdf8;
+  margin-bottom: 30px;
+}
+.sidebar a {
+  display: block;
+  padding: 12px;
+  color: #cbd5f5;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.sidebar a:hover {
+  background: #1e293b;
+}
+.main {
+  flex: 1;
+  padding: 30px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 20px;
+}
+.card {
+  background: #020617;
+  padding: 20px;
+  border-radius: 14px;
+}
+.card h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #94a3b8;
+}
+.card p {
+  font-size: 24px;
+  margin-top: 10px;
+  color: #22c55e;
+}
+.chart-box {
+  margin-top: 40px;
+  background: #020617;
+  padding: 20px;
+  border-radius: 14px;
+}
+.actions {
+  margin-top: 40px;
+  display: flex;
+  gap: 20px;
+}
+.actions button {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.deposit {
+  background: #22c55e;
+}
+.withdraw {
+  background: #ef4444;
+}
+.table-box {
+  margin-top: 40px;
+  background: #020617;
+  padding: 20px;
+  border-radius: 14px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #1e293b;
+  text-align: left;
+}
+th {
+  color: #94a3b8;
+}
+</style>
 </head>
+
 <body>
+<div class="dashboard">
 
-    <div class="sidebar">
-        <h2>FUNDARA BANK</h2>
-        <div class="nav-link active" onclick="switchView('fiat-view')">Fiat Account</div>
-        <div class="nav-link" onclick="switchView('crypto-view')">Crypto Account</div>
-        <div class="nav-link" onclick="switchView('investment-view')">Investment Plan</div>
-        <div class="nav-link" onclick="switchView('transfer-view')">Internal Transfer</div>
+  <div class="sidebar">
+    <h2>INVEST PRO</h2>
+    <a href="#">Dashboard</a>
+    <a href="#">Deposit</a>
+    <a href="#">Withdraw</a>
+    <a href="#">Transactions</a>
+    <a href="#">Settings</a>
+    <a href="#">Logout</a>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h1>Welcome, Investor</h1>
+      <div>Account ID: <strong>#839201</strong></div>
     </div>
 
-    <div class="main-wrapper">
-        
-        <section id="fiat-view" class="view-section active">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h1>Financial Overview</h1>
-                <button class="btn" onclick="addDeposit()">+ Add Deposit</button>
-            </div>
-            
-            <div class="balance-card">
-                <p>Total Balance</p>
-                <div class="balance-amount" id="total-balance">$101,018,264.35</div>
-                <p>Available for transactions</p>
-            </div>
-
-            <div class="grid-layout">
-                <div class="white-card">
-                    <h3>Recent Transactions</h3>
-                    <table id="transaction-table">
-                        <tr><th>Transaction</th><th>Amount</th><th>Status</th></tr>
-                        <tr><td>Family Support</td><td>-$200.00</td><td><span class="status" style="color:orange">Pending</span></td></tr>
-                        <tr><td>Deposit via Wire</td><td>+$50,000.00</td><td><span class="status status-completed">Completed</span></td></tr>
-                    </table>
-                </div>
-                <div class="white-card">
-                    <h3>Quick Actions</h3>
-                    <button class="btn" style="width:100%; margin-bottom:10px;" onclick="switchView('transfer-view')">Send Money</button>
-                    <button class="btn" style="width:100%; background:#555;">Account Settings</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="crypto-view" class="view-section">
-            <h1>Crypto Portfolio</h1>
-            <div class="grid-layout">
-                <div class="white-card">
-                    <h3>Your Assets</h3>
-                    <p>Bitcoin (BTC): 0.0714 BTC</p>
-                    <p>Ethereum (ETH): 1.450 ETH</p>
-                    <button class="btn">Swap Crypto to Fiat</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="investment-view" class="view-section">
-            <h1>Select Investment Plan</h1>
-            <div class="investment-grid">
-                <div class="plan-card" onclick="buyPlan('Hedge Fund', 10)">
-                    <h3>Hedge Fund</h3>
-                    <p>Min: $1,000 | ROI: 10%</p>
-                    <p>Duration: 30 Days</p>
-                    <button class="btn">Select Plan</button>
-                </div>
-                <div class="plan-card" onclick="buyPlan('Crypto Staking', 15)">
-                    <h3>Crypto Staking</h3>
-                    <p>Min: $5,000 | ROI: 15%</p>
-                    <p>Duration: 60 Days</p>
-                    <button class="btn">Select Plan</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="transfer-view" class="view-section">
-            <h1>Internal Transfer</h1>
-            <div class="white-card" style="max-width: 500px;">
-                <label>Recipient Account Number</label><br>
-                <input type="text" id="acc-num" style="width:100%; padding:10px; margin:10px 0;"><br>
-                <label>Amount ($)</label><br>
-                <input type="number" id="send-amount" style="width:100%; padding:10px; margin:10px 0;"><br>
-                <button class="btn" onclick="processTransfer()">Send Money Now</button>
-            </div>
-        </section>
-
+    <div class="cards">
+      <div class="card">
+        <h3>Account Balance</h3>
+        <p id="balance">$5,000</p>
+      </div>
+      <div class="card">
+        <h3>Total Profit</h3>
+        <p id="profit">$1,240</p>
+      </div>
+      <div class="card">
+        <h3>ROI</h3>
+        <p>24.8%</p>
+      </div>
+      <div class="card">
+        <h3>Active Plan</h3>
+        <p>Premium</p>
+      </div>
     </div>
 
-    <script>
-        let balance = 101018264.35;
+    <div class="chart-box">
+      <canvas id="investmentChart"></canvas>
+    </div>
 
-        function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
+    <div class="actions">
+      <button class="deposit" onclick="deposit()">Deposit</button>
+      <button class="withdraw" onclick="withdraw()">Withdraw</button>
+    </div>
 
-        function addDeposit() {
-            let amount = prompt("Enter deposit amount:");
-            if (amount) {
-                balance += parseFloat(amount);
-                updateUI("Deposit", amount);
-            }
-        }
+    <div class="table-box">
+      <h3>Transaction History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="transactions">
+          <tr>
+            <td>2026-01-10</td>
+            <td>Deposit</td>
+            <td>$2,000</td>
+            <td>Completed</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-        function processTransfer() {
-            let amount = document.getElementById('send-amount').value;
-            if (amount && amount <= balance) {
-                balance -= parseFloat(amount);
-                updateUI("Transfer Out", -amount);
-                alert("Transfer Successful!");
-                switchView('fiat-view');
-            } else {
-                alert("Insufficient funds or invalid amount.");
-            }
-        }
+  </div>
+</div>
 
-        function buyPlan(name, roi) {
-            let confirmBuy = confirm(`Do you want to invest in the ${name} at ${roi}% ROI?`);
-            if (confirmBuy) alert(`Investment in ${name} active!`);
-        }
+<script>
+let balance = 5000;
+let profit = 1240;
 
-        function updateUI(type, amount) {
-            document.getElementById('total-balance').innerText = "$" + balance.toLocaleString();
-            let table = document.getElementById('transaction-table');
-            let row = table.insertRow(1);
-            row.innerHTML = `<td>${type}</td><td>${amount > 0 ? '+' : ''}${amount}</td><td><span class="status status-completed">Completed</span></td>`;
-        }
-    </script>
+function deposit() {
+  balance += 500;
+  profit += 120;
+  updateUI("Deposit", 500);
+}
+
+function withdraw() {
+  balance -= 300;
+  updateUI("Withdraw", 300);
+}
+
+function updateUI(type, amount) {
+  document.getElementById("balance").innerText = "$" + balance;
+  document.getElementById("profit").innerText = "$" + profit;
+
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${new Date().toISOString().slice(0,10)}</td>
+    <td>${type}</td>
+    <td>$${amount}</td>
+    <td>Completed</td>
+  `;
+  document.getElementById("transactions").prepend(row);
+}
+
+const ctx = document.getElementById("investmentChart");
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ["Jan","Feb","Mar","Apr","May","Jun"],
+    datasets: [{
+      label: "Portfolio Growth",
+      data: [2000,2600,3100,3900,4500,5000],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false }
+    }
+  }
+});
+</script>
+
 </body>
 </html>
